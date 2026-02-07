@@ -1,0 +1,8 @@
+{
+  "name": "C.R.I.S.P. DATA CENTRE",
+  "description": "Professional military-grade interface for disaster rescue probe swarms with real-time telemetry, mesh networking, and automated search patterns.",
+  "requestFramePermissions": [
+    "microphone",
+    "camera"
+  ]
+}
