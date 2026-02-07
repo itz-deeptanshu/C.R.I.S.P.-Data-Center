@@ -1,5 +1,6 @@
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { io } from 'socket.io-client';
+
 import { 
   Activity, 
   Battery, 
@@ -50,6 +51,7 @@ interface ChatMessage {
 }
 
 const App: React.FC = () => {
+  const socket = useRef(io('http://localhost:5000')).current;
   const [probes, setProbes] = useState<RubbleRatProbe[]>([]);
   const [selectedProbeId, setSelectedProbeId] = useState<string | null>(null);
   const [obstacles, setObstacles] = useState<Obstacle[]>([]);
@@ -128,6 +130,7 @@ const App: React.FC = () => {
     }
   }, [liveStream, activeCameraFeed]);
 
+  
   useEffect(() => {
     const initialProbes = [
       new RubbleRatProbe(`P01`, 300, 300)
@@ -198,6 +201,23 @@ const App: React.FC = () => {
     setDetectionAlert({ probeId: probe.id, location: { x: probe.x, y: probe.y } });
     setTranscription(prev => [...prev.slice(-4), `[CRITICAL - ${probe.id}] Potential bio-signature at ${Math.round(probe.x)}, ${Math.round(probe.y)}`]);
   }, []);
+  useEffect(() => {
+    // This listens for the 'survivor_detected' event from your Python server.py
+    socket.on('survivor_detected', (data: { probeId: string }) => {
+      // Find the probe in your current state
+      const targetProbe = probes.find(p => p.id === data.probeId);
+      
+      if (targetProbe) {
+        // This calls YOUR existing function (line 173) to show the red popup
+        handleDetection(targetProbe);
+      }
+    });
+
+    // Cleanup when the component unmounts
+    return () => {
+      socket.off('survivor_detected');
+    };
+  }, [probes, handleDetection]);
 
   useEffect(() => {
     const tick = () => {
@@ -669,39 +689,53 @@ const App: React.FC = () => {
                   </div>
                 </div>
                 <div className="h-48 relative border border-emerald-500/20 rounded overflow-hidden bg-black shadow-inner">
-                  {liveStream ? (
-                    <div className="w-full h-full relative">
-                      <video 
-                        ref={videoRef}
-                        autoPlay
-                        muted
-                        playsInline
-                        className={`w-full h-full object-cover grayscale transition-all duration-500 ${activeCameraFeed === 'THERMAL' ? 'invert contrast-200 hue-rotate-180 brightness-150' : 'brightness-75 contrast-125'}`}
-                      />
-                      <div className="absolute inset-0 pointer-events-none border-[1px] border-emerald-500/10 flex flex-col justify-between p-2">
-                        <div className="flex justify-between">
-                          <div className="flex items-center gap-1.5 bg-black/60 px-2 py-1 rounded">
-                            <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${activeCameraFeed === 'HD' ? 'bg-red-500' : 'bg-orange-500'}`}></div>
-                            <span className="text-[8px] font-bold">{activeCameraFeed === 'HD' ? '1080P_LIVE' : 'FLIR_THERM'}</span>
-                          </div>
-                          <div className="text-[8px] font-bold bg-black/40 px-1 py-0.5 rounded">
-                            {new Date().toISOString().split('T')[1].split('.')[0]}
-                          </div>
-                        </div>
-                        <div className="flex justify-center">
-                           <div className="w-24 h-24 border border-white/20 relative">
-                             <div className="absolute top-1/2 left-0 w-full h-[1px] bg-white/10"></div>
-                             <div className="absolute left-1/2 top-0 w-[1px] h-full bg-white/10"></div>
-                           </div>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="absolute inset-0 flex items-center justify-center bg-white/5 animate-pulse">
-                      <Video className="w-8 h-8 opacity-20" />
-                    </div>
-                  )}
-                </div>
+  {liveStream ? (
+    <div className="w-full h-full relative">
+      {/* --- START OF AI INTEGRATION CHANGE --- */}
+      {activeCameraFeed === 'HD' ? (
+        /* This <img> tag pulls the processed YOLO frames from your Python server */
+        <img 
+          src="http://localhost:5000/video_feed" 
+          className="w-full h-full object-cover"
+          alt="AI Tactical Feed"
+        />
+      ) : (
+        /* This keeps your original Thermal/IR logic for the local feed */
+        <video 
+          ref={videoRef}
+          autoPlay
+          muted
+          playsInline
+          className={`w-full h-full object-cover transition-all duration-500 grayscale invert contrast-200 hue-rotate-180 brightness-150`}
+        />
+      )}
+      {/* --- END OF AI INTEGRATION CHANGE --- */}
+
+      {/* Keep all your overlay divs below so the UI still looks like a HUD */}
+      <div className="absolute inset-0 pointer-events-none border-[1px] border-emerald-500/10 flex flex-col justify-between p-2">
+        <div className="flex justify-between">
+          <div className="flex items-center gap-1.5 bg-black/60 px-2 py-1 rounded">
+            <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${activeCameraFeed === 'HD' ? 'bg-red-500' : 'bg-orange-500'}`}></div>
+            <span className="text-[8px] font-bold">{activeCameraFeed === 'HD' ? '1080P_LIVE' : 'FLIR_THERM'}</span>
+          </div>
+          <div className="text-[8px] font-bold bg-black/40 px-1 py-0.5 rounded">
+            {new Date().toISOString().split('T')[1].split('.')[0]}
+          </div>
+        </div>
+        <div className="flex justify-center">
+            <div className="w-24 h-24 border border-white/20 relative">
+                <div className="absolute top-1/2 left-0 w-full h-[1px] bg-white/10"></div>
+                <div className="absolute left-1/2 top-0 w-[1px] h-full bg-white/10"></div>
+            </div>
+        </div>
+      </div>
+    </div>
+  ) : (
+    <div className="absolute inset-0 flex items-center justify-center bg-white/5 animate-pulse">
+      <Video className="w-8 h-8 opacity-20" />
+    </div>
+  )}
+</div>
               </div>
 
               {/* Audio Waveform Viz */}
