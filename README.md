@@ -60,29 +60,41 @@ The C.R.I.S.P. interface supports the following tactical operations for the prob
    cd C.R.I.S.P.-Data-Center-Vid-Acc
 
 
-📂 **the detection ML **  
-├── 📄server.py
+📂 **the detection ML**  
+├── 📄 `server.py` 
 
-
-
-
-📂 **frontend/**  
+📂 **frontend**  
 ├── 📄 `index.html`
+
 ├── 📄 `App.jsx`
+
 ├── 📄 `App.tsx`
+
 ├── 📄 `index.tsx`
+
 ├── 📄 `.env.local`
+
 ├── 📄 `metadata.json`
+
 ├── 📄 `package.json`   _(Using Vite)_
+
 ├── 📄 `package-lock.json`
+
 ├── 📄 `tsconfg.json`
+
 ├── 📄 `vite.config.json`
-│   ├── 📂 **components/**  
-│   │   ├── 📄 `AudioVisualizer.tsx`  
-│   │   ├── 📄 `GyroViz.tsx`  
-│   │   ├── 📄 `MapView.tsx`  
-│   ├── 📂 **services**  
-│   │   ├── 📄 `simulation.ts`  
+
+├── 📂 **components**  
+
+│   ├── 📄 `AudioVisualizer.tsx`  
+
+│   ├── 📄 `GyroViz.tsx`  
+
+│   ├── 📄 `MapView.tsx`  
+
+├── 📂 **services**  
+
+│   ├── 📄 `simulation.ts`  
 
 ---
 ### Contact
