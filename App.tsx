@@ -691,42 +691,36 @@ const App: React.FC = () => {
                 <div className="h-48 relative border border-emerald-500/20 rounded overflow-hidden bg-black shadow-inner">
   {liveStream ? (
     <div className="w-full h-full relative">
-      {/* --- START OF AI INTEGRATION CHANGE --- */}
       {activeCameraFeed === 'HD' ? (
-        /* This <img> tag pulls the processed YOLO frames from your Python server */
+        /* --- YOLO PROCESSED FEED --- */
         <img 
           src="http://localhost:5000/video_feed" 
           className="w-full h-full object-cover"
           alt="AI Tactical Feed"
+          //Adding a key or timestamp helps force a refresh if the server restarts
+          key="yolo-feed"
         />
       ) : (
-        /* This keeps your original Thermal/IR logic for the local feed */
-        <video 
+        /* --- LOCAL THERMAL SIMULATION --- */
+        <video  
           ref={videoRef}
           autoPlay
           muted
           playsInline
-          className={`w-full h-full object-cover transition-all duration-500 grayscale invert contrast-200 hue-rotate-180 brightness-150`}
+          className="w-full h-full object-cover grayscale invert contrast-200 hue-rotate-180 brightness-150"
         />
       )}
-      {/* --- END OF AI INTEGRATION CHANGE --- */}
 
-      {/* Keep all your overlay divs below so the UI still looks like a HUD */}
+      {/* HUD OVERLAYS (Keep these so the AI feed still looks like a probe UI) */}
       <div className="absolute inset-0 pointer-events-none border-[1px] border-emerald-500/10 flex flex-col justify-between p-2">
         <div className="flex justify-between">
           <div className="flex items-center gap-1.5 bg-black/60 px-2 py-1 rounded">
             <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${activeCameraFeed === 'HD' ? 'bg-red-500' : 'bg-orange-500'}`}></div>
-            <span className="text-[8px] font-bold">{activeCameraFeed === 'HD' ? '1080P_LIVE' : 'FLIR_THERM'}</span>
+            <span className="text-[8px] font-bold">{activeCameraFeed === 'HD' ? '1080P_YOLO_LINK' : 'FLIR_THERM'}</span>
           </div>
           <div className="text-[8px] font-bold bg-black/40 px-1 py-0.5 rounded">
-            {new Date().toISOString().split('T')[1].split('.')[0]}
+            {new Date().toLocaleTimeString()}
           </div>
-        </div>
-        <div className="flex justify-center">
-            <div className="w-24 h-24 border border-white/20 relative">
-                <div className="absolute top-1/2 left-0 w-full h-[1px] bg-white/10"></div>
-                <div className="absolute left-1/2 top-0 w-[1px] h-full bg-white/10"></div>
-            </div>
         </div>
       </div>
     </div>
