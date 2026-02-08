@@ -101,7 +101,7 @@ The C.R.I.S.P. interface supports the following tactical operations for the prob
 ---
 ### Contact
 * Pulkit Batra- pulkit.batra360@gmail.com
-* Deeptanshu CHakraborty- deeptanshuchakraborty@gmail.com
+* Deeptanshu Chakraborty- deeptanshuchakraborty@gmail.com
 * Ekarth Panwar- ekarthpanwar4950@gmail.com
 * Akarsh Khandelwal- akarshkhandelwal10@gmail.com
 * Tavleen Kaur- Tavleenk4280@gmail.com
