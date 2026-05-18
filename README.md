@@ -82,9 +82,9 @@ The C.R.I.S.P. interface supports the following tactical operations for the prob
 
 ├── 📄 `package-lock.json`
 
-├── 📄 `tsconfg.json`
+├── 📄 `tsconfig.json`
 
-├── 📄 `vite.config.json`
+├── 📄 `vite.config.ts`
 
 ├── 📂 **components**  
 
