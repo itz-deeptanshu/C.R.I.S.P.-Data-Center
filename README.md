@@ -99,6 +99,11 @@ The C.R.I.S.P. interface supports the following tactical operations for the prob
 │   ├── 📄 `simulation.ts`  
 
 ---
+## 📄 License
+ 
+This project is licensed under the [MIT License](LICENSE).
+ 
+---
 ### Contact
 * Pulkit Batra- pulkit.batra360@gmail.com
 * Deeptanshu Chakraborty- deeptanshuchakraborty@gmail.com
